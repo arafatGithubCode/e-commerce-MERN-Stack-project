@@ -1,31 +1,26 @@
 const express = require("express");
-
 const morgan = require("morgan");
-
 const createError = require("http-errors");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 
+const rateLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5,
+  message: "Too many requests from this api. Please try again later",
+});
+
 app.use(morgan("dev"));
+app.use(rateLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const isLoggedIn = (req, res, next) => {
-  const login = true;
-  if (login) {
-    console.log("login success");
-    req.body.id = 101;
-    next();
-  } else {
-    return res.status(401).json({ message: "please login first" });
-  }
-};
 
 app.get("/", (req, res) => {
   res.send("Welcome to server");
 });
 
-app.get("/api/users", isLoggedIn, (req, res) => {
+app.get("/api/users", (req, res) => {
   console.log(req.body.id);
   res.status(200).send({
     message: "User profile is returned!",
