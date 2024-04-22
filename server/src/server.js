@@ -23,11 +23,23 @@ app.get("/", (req, res) => {
   res.send("Welcome to server");
 });
 
-app.get("/api/user", isLoggedIn, (req, res) => {
+app.get("/api/users", isLoggedIn, (req, res) => {
   console.log(req.body.id);
   res.status(200).send({
     message: "User profile is returned!",
   });
+});
+
+// client err handling middleware
+app.use((req, res, next) => {
+  res.status(400).json({ message: "route not found" });
+  next();
+});
+
+// server err handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("something broke!");
 });
 
 app.listen(3001, () => {
