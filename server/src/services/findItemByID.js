@@ -3,13 +3,12 @@ const User = require("../models/userModel");
 
 const createError = require("http-errors");
 
-const findUserByID = async (userID) => {
+const findItemByID = async (id, options = {}) => {
   try {
-    const options = { password: 0 };
-    const user = await User.findById(userID, options);
+    const item = await User.findById(id, options);
 
-    if (!user) throw createError(404, "User does not exist with this ID");
-    return user;
+    if (!item) throw createError(404, "Item does not exist with this ID");
+    return item;
   } catch (error) {
     if (error instanceof mongoose.Error) {
       throw createError(400, "Invalid User ID");
@@ -18,4 +17,4 @@ const findUserByID = async (userID) => {
   }
 };
 
-module.exports = { findUserByID };
+module.exports = { findItemByID };

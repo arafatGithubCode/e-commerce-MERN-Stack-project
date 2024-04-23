@@ -3,7 +3,8 @@ const User = require("../models/userModel");
 const createError = require("http-errors");
 const { successResponse } = require("./responseController");
 const mongoose = require("mongoose");
-const { findUserByID } = require("../services/findUserByID");
+const { findItemByID } = require("../services/findItemByID");
+const fs = require("fs");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -53,8 +54,9 @@ const getUsers = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const userID = req.params.id;
+    const options = { password: 0 };
+    const user = await findItemByID(userID, options);
 
-    const user = await findUserByID(userID);
     return successResponse(res, {
       statusCode: 200,
       message: "A user was returned successfully!",
@@ -69,4 +71,41 @@ const getUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUser };
+const deleteUser = async (req, res, next) => {
+  try {
+    const userID = req.params.id;
+    const options = { password: 0 };
+
+    const user = await findItemByID(userID, options);
+
+    const userImagePath = user.image;
+    fs.access(userImagePath, (err) => {
+      if (err) {
+        console.error("User image does not exist!");
+      } else {
+        fs.unlink(userImagePath, (err) => {
+          if (err) throw err;
+          console.log("User image deleted successfully!");
+        });
+      }
+    });
+
+    await User.findByIdAndDelete({
+      _id: userID,
+      isAdmin: false,
+    });
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "A user was deleted successfully!",
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "Invalid User ID"));
+      return;
+    }
+    next(error);
+  }
+};
+
+module.exports = { getUsers, getUser, deleteUser };
