@@ -6,6 +6,7 @@ const rateLimit = require("express-rate-limit");
 const app = express();
 
 const rateLimiter = rateLimit({
+  // user can set 5 req within a min
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 5,
   message: "Too many requests from this api. Please try again later",
