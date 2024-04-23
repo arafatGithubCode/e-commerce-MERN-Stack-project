@@ -1,8 +1,10 @@
-//middleware
 const express = require("express");
 const morgan = require("morgan");
 const createError = require("http-errors");
 const rateLimit = require("express-rate-limit");
+
+const { userRouter } = require("./routers/userRouter");
+const { seedRouter } = require("./routers/seedRouter");
 
 const app = express();
 
@@ -18,10 +20,8 @@ app.use(rateLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//routes
-const { userRouter } = require("./routers/userRouter");
-
 app.use("/api/users", userRouter);
+app.use("/api/seed", seedRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to server");

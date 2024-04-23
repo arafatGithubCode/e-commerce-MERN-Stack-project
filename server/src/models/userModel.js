@@ -12,7 +12,7 @@ const userSchema = new Schema(
       maxLength: [31, "The length of name maximum 31 characters."],
       minLength: [3, "The length of name minimum 3 characters."],
     },
-    name: {
+    email: {
       type: String,
       required: [true, "email is required."],
       trim: true,
@@ -20,7 +20,7 @@ const userSchema = new Schema(
       lowercase: true,
       validate: {
         validator: function (v) {
-          return /^\[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
+          return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
         },
         message: "Please enter a valid email address",
       },
@@ -41,7 +41,7 @@ const userSchema = new Schema(
       required: [true, "address is required."],
     },
     phone: {
-      type: Number,
+      type: String,
       required: [true, "phone is required."],
     },
     isAdmin: {
