@@ -1,3 +1,4 @@
+//middleware
 const express = require("express");
 const morgan = require("morgan");
 const createError = require("http-errors");
@@ -17,15 +18,13 @@ app.use(rateLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//routes
+const { userRouter } = require("./routers/userRouter");
+
+app.use("/api/users", userRouter);
+
 app.get("/", (req, res) => {
   res.send("Welcome to server");
-});
-
-app.get("/api/users", (req, res) => {
-  console.log(req.body.id);
-  res.status(200).send({
-    message: "User profile is returned!",
-  });
 });
 
 // client err handling middleware
