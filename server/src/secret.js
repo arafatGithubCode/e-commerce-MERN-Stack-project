@@ -10,4 +10,18 @@ const defaultUserImage =
 
 const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "sdlkfjskdltkijd55";
 
-module.exports = { serverPort, altasDB, defaultUserImage, jwtActivationKey };
+const smtpUsername = process.env.SMTP_USERNAME || "";
+
+const smtpPassword = process.env.SMTP_PASSWORD || "";
+
+const clientUrl = process.env.CLIENT_URL || "";
+
+module.exports = {
+  serverPort,
+  altasDB,
+  defaultUserImage,
+  jwtActivationKey,
+  smtpUsername,
+  smtpPassword,
+  clientUrl,
+};
