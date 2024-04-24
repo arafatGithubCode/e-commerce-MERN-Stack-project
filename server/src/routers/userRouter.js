@@ -5,11 +5,13 @@ const {
   getUserByID,
   deleteUserByID,
   processRegister,
+  activateUserAccount,
 } = require("../controllers/userController");
 
 ////GET: api/users
-userRouter.get("/", getUsers);
 userRouter.post("/process-register", processRegister);
+userRouter.post("/verify", activateUserAccount);
+userRouter.get("/", getUsers);
 userRouter.get("/:id", getUserByID);
 userRouter.delete("/:id", deleteUserByID);
 

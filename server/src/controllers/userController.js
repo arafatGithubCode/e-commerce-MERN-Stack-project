@@ -1,6 +1,7 @@
-const User = require("../models/userModel");
-
 const createError = require("http-errors");
+const jwt = require("jsonwebtoken");
+
+const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const mongoose = require("mongoose");
 const { findItemByID } = require("../services/findItemByID");
@@ -154,4 +155,51 @@ const processRegister = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUserByID, deleteUserByID, processRegister };
+const activateUserAccount = async (req, res, next) => {
+  try {
+    const token = req.body.token;
+    if (!token) throw createError(404, "token not found!");
+
+    try {
+      const decoded = jwt.verify(token, jwtActivationKey);
+      if (!decoded) throw createError(401, "Unable to verify user!");
+
+      const userExist = await User.exists({ email: decoded.email });
+
+      if (userExist) {
+        throw createError(
+          409,
+          "User with this email already exist. Please sign in"
+        );
+      }
+
+      await User.create(decoded);
+      return successResponse(res, {
+        statusCode: 200,
+        message: "A user was registered successfully!",
+      });
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        throw createError(401, "Token has Expired!");
+      } else if (error.name === "jsonWebTokenError") {
+        throw createError(401, "Invalid token");
+      } else {
+        throw error;
+      }
+    }
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "token founding error"));
+      return;
+    }
+    next(error);
+  }
+};
+
+module.exports = {
+  getUsers,
+  getUserByID,
+  deleteUserByID,
+  processRegister,
+  activateUserAccount,
+};
