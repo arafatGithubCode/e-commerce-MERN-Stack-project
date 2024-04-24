@@ -99,4 +99,39 @@ const deleteUserByID = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUserByID, deleteUserByID };
+const processRegister = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+
+    const userExist = await User.exists({ email: email });
+
+    if (userExist) {
+      throw createError(
+        409,
+        "User with this email already exist. Please sign in"
+      );
+    }
+
+    const newUser = {
+      name,
+      email,
+      password,
+      phone,
+      address,
+    };
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "A user was created successfully!",
+      payload: { newUser },
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "Invalid User ID"));
+      return;
+    }
+    next(error);
+  }
+};
+
+module.exports = { getUsers, getUserByID, deleteUserByID, processRegister };
