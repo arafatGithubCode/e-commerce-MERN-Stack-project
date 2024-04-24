@@ -5,6 +5,8 @@ const { successResponse } = require("./responseController");
 const mongoose = require("mongoose");
 const { findItemByID } = require("../services/findItemByID");
 const { deleteImage } = require("../helper/deleteImage");
+const { createjsonWebToken } = require("../helper/jsonwebtoken");
+const { jwtActivationKey } = require("../secret");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -112,18 +114,17 @@ const processRegister = async (req, res, next) => {
       );
     }
 
-    const newUser = {
-      name,
-      email,
-      password,
-      phone,
-      address,
-    };
+    //create jwt
+    const token = createjsonWebToken(
+      { name, email, password, phone, address },
+      jwtActivationKey,
+      "10m"
+    );
 
     return successResponse(res, {
       statusCode: 200,
       message: "A user was created successfully!",
-      payload: { newUser },
+      payload: { token },
     });
   } catch (error) {
     if (error instanceof mongoose.Error) {
