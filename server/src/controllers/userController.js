@@ -51,11 +51,11 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-const getUser = async (req, res, next) => {
+const getUserByID = async (req, res, next) => {
   try {
     const userID = req.params.id;
     const options = { password: 0 };
-    const user = await findItemByID(userID, options);
+    const user = await findItemByID(User, userID, options);
 
     return successResponse(res, {
       statusCode: 200,
@@ -71,12 +71,12 @@ const getUser = async (req, res, next) => {
   }
 };
 
-const deleteUser = async (req, res, next) => {
+const deleteUserByID = async (req, res, next) => {
   try {
     const userID = req.params.id;
     const options = { password: 0 };
 
-    const user = await findItemByID(userID, options);
+    const user = await findItemByID(User, userID, options);
 
     const userImagePath = user.image;
     fs.access(userImagePath, (err) => {
@@ -108,4 +108,4 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUser, deleteUser };
+module.exports = { getUsers, getUserByID, deleteUserByID };
