@@ -33,8 +33,9 @@ const userSchema = new Schema(
       set: (v) => bcryptjs.hashSync(v, bcryptjs.genSaltSync(10)),
     },
     image: {
-      type: String,
-      default: defaultUserImage,
+      type: Buffer,
+      contentType: String,
+      required: [true, "image is required."],
     },
     address: {
       type: String,

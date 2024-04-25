@@ -107,6 +107,8 @@ const processRegister = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
+    const imageBufferString = req.file.buffer.toString("base64");
+
     const userExist = await User.exists({ email: email });
 
     if (userExist) {
@@ -118,7 +120,7 @@ const processRegister = async (req, res, next) => {
 
     //create jwt
     const token = createjsonWebToken(
-      { name, email, password, phone, address },
+      { name, email, password, phone, address, image: imageBufferString },
       jwtActivationKey,
       "10m"
     );
