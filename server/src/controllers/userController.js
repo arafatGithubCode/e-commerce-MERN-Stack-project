@@ -57,6 +57,7 @@ const getUsers = async (req, res, next) => {
 
 const getUserByID = async (req, res, next) => {
   try {
+    console.log("ID_________", req.body.userID); // set in isLogged in middleware
     const userID = req.params.id;
     const options = { password: 0 };
     const user = await findItemByID(User, userID, options);
