@@ -12,7 +12,7 @@ const uploadUserImage = require("../middlewares/uploadFile");
 const runValidation = require("../validators");
 const { validateUserRegistration } = require("../validators/auth");
 
-////GET: api/users
+//GET: api/users
 userRouter.post(
   "/process-register",
   uploadUserImage.single("image"),

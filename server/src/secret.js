@@ -6,6 +6,7 @@ const altasDB =
   process.env.ATLAS_DB || "mongodb://localhost:27017/e-commerceDB";
 
 const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "sdlkfjskdltkijd55";
+const jwtAccessKey = process.env.JWT_ACCESS_KEY || "DFDLKFJLSKDJFLKSDJFLKS";
 
 const smtpUsername = process.env.SMTP_USERNAME || "";
 
@@ -19,6 +20,7 @@ module.exports = {
   serverPort,
   altasDB,
   jwtActivationKey,
+  jwtAccessKey,
   smtpUsername,
   smtpPassword,
   clientUrl,

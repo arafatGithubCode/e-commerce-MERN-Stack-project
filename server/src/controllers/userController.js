@@ -223,19 +223,6 @@ const updateUserByID = async (req, res, next) => {
 
     let updates = {};
 
-    // if (req.body.name) {
-    //   updates.name = req.body.name;
-    // }
-    // if (req.body.password) {
-    //   updates.password = req.body.password;
-    // }
-    // if (req.body.address) {
-    //   updates.address = req.body.address;
-    // }
-    // if (req.body.phone) {
-    //   updates.phone = req.body.phone;
-    // }
-
     //best practice
     for (let key in req.body) {
       if (["name", "password", "address", "phone"].includes(key)) {
