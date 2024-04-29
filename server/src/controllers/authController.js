@@ -38,11 +38,15 @@ const handleLogin = async (req, res, next) => {
       sameSite: "none",
     });
 
+    const userWithoutPassword = await User.findOne({ email }).select(
+      "-password"
+    );
+
     //success response
     return successResponse(res, {
       statusCode: 200,
       message: "A user was logged in successfully!",
-      payload: {},
+      payload: { userWithoutPassword },
     });
   } catch (error) {
     next(error);

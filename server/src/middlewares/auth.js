@@ -47,7 +47,6 @@ const isAdmin = async (req, res, next) => {
         "Forbidden. You must be an admin  to access the resources."
       );
     }
-
     next();
   } catch (error) {
     return next(error);
