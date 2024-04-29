@@ -8,7 +8,7 @@ const {
   activateUserAccount,
   updateUserByID,
 } = require("../controllers/userController");
-const { isLoggedIn, isLoggedOut } = require("../middlewares/auth");
+const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 const uploadUserImage = require("../middlewares/uploadFile");
 const runValidation = require("../validators");
 const { validateUserRegistration } = require("../validators/auth");
@@ -23,7 +23,7 @@ userRouter.post(
   processRegister
 );
 userRouter.post("/verify", isLoggedOut, activateUserAccount);
-userRouter.get("/", isLoggedIn, getUsers);
+userRouter.get("/", isLoggedIn, isAdmin, getUsers);
 userRouter.get("/:id", isLoggedIn, getUserByID);
 userRouter.delete("/:id", isLoggedIn, deleteUserByID);
 userRouter.put(
