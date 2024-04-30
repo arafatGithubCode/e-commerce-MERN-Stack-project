@@ -9,6 +9,8 @@ const { deleteImage } = require("../helper/deleteImage");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtActivationKey, clientUrl } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
+const { handleLogin } = require("./authController");
+const { handleUserAction } = require("../services/userService");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -265,64 +267,16 @@ const updateUserByID = async (req, res, next) => {
   }
 };
 
-const handleBanUserByID = async (req, res, next) => {
+const handleManageUserStatusByID = async (req, res, next) => {
   try {
     const userID = req.params.id;
-    const user = await User.findOne({ _id: userID });
-    if (user.isBanned) {
-      throw createError(400, "This user already has been banned");
-    }
-    const updates = { isBanned: true };
-    const updateOptions = { new: true, runValidators: true, context: "query" };
+    const action = req.body.action;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userID,
-      updates,
-      updateOptions
-    ).select("-password");
-
-    if (!updatedUser) {
-      throw createError(400, "User cannot be banned successfully.");
-    }
+    const successMessage = await handleUserAction(userID, action);
 
     return successResponse(res, {
       statusCode: 200,
-      message: "A user was banned successfully!",
-      payload: { updatedUser },
-    });
-  } catch (error) {
-    if (error instanceof mongoose.Error) {
-      next(createError(400, "Invalid User ID"));
-      return;
-    }
-    next(error);
-  }
-};
-
-const handleUnbanUserByID = async (req, res, next) => {
-  try {
-    const userID = req.params.id;
-    const user = await User.findOne({ _id: userID });
-    if (!user.isBanned) {
-      throw createError(400, "This user already has been unbanned");
-    }
-    const updates = { isBanned: false };
-    const updateOptions = { new: true, runValidators: true, context: "query" };
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userID,
-      updates,
-      updateOptions
-    ).select("-password");
-
-    if (!updatedUser) {
-      throw createError(400, "User cannot be unbanned successfully.");
-    }
-
-    return successResponse(res, {
-      statusCode: 200,
-      message: "A user was unbanned successfully!",
-      payload: { updatedUser },
+      message: successMessage,
     });
   } catch (error) {
     if (error instanceof mongoose.Error) {
@@ -340,6 +294,5 @@ module.exports = {
   processRegister,
   activateUserAccount,
   updateUserByID,
-  handleBanUserByID,
-  handleUnbanUserByID,
+  handleManageUserStatusByID,
 };
