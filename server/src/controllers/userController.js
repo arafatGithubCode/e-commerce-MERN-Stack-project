@@ -5,7 +5,11 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const mongoose = require("mongoose");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
-const { jwtActivationKey, clientUrl } = require("../secret");
+const {
+  jwtActivationKey,
+  clientUrl,
+  jwtResetPasswordKey,
+} = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const {
   findUsers,
@@ -251,6 +255,54 @@ const handleUpdatePassword = async (req, res, next) => {
   }
 };
 
+const handleForgetPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const userData = await User.findOne({ email });
+
+    if (!userData) {
+      throw createError(
+        404,
+        "Email is incorrect or you have not verified your email address. Please register first."
+      );
+    }
+
+    //create jwt
+    const token = createjsonWebToken({ email }, jwtResetPasswordKey, "10m");
+
+    //prepare email
+    const emailData = {
+      email,
+      subject: "Password Reset Email",
+      html: `
+        <h2> Hello ${userData.name} !</h2>
+        <p> Please click here to <a href="${clientUrl}/api/users/reset-password/${token}" target="_blank">reset your password</a> </p>
+      `,
+    };
+
+    // send email with nodemailer
+    try {
+      await emailWithNodeMailer(emailData);
+    } catch (emailErr) {
+      next(createError(500, "Failed to send reset password email"));
+      return;
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: `Please go to your ${email} to reset the password`,
+      payload: { token },
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "Invalid User ID"));
+      return;
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   handleGetUsers,
   handleGetUserByID,
@@ -260,4 +312,5 @@ module.exports = {
   handleUpdateUserByID,
   handleManageUserStatusByID,
   handleUpdatePassword,
+  handleForgetPassword,
 };

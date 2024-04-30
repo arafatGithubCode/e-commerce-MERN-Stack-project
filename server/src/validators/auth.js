@@ -97,8 +97,19 @@ const validateUserUpdatePassword = [
     }),
 ];
 
+//forget password validation
+const validateUserForgetPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required. Enter your email address.")
+    .isEmail()
+    .withMessage("Invalid email address"),
+];
+
 module.exports = {
   validateUserRegistration,
   validateUserLogin,
   validateUserUpdatePassword,
+  validateUserForgetPassword,
 };

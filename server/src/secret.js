@@ -7,6 +7,8 @@ const altasDB =
 
 const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "sdlkfjskdltkijd55";
 const jwtAccessKey = process.env.JWT_ACCESS_KEY || "DFDLKFJLSKDJFLKSDJFLKS";
+const jwtResetPasswordKey =
+  process.env.JWT_RESET_PASSWORD_KEY || "DFDLKFJLSKDJFLKSDJFLKS254";
 
 const smtpUsername = process.env.SMTP_USERNAME || "";
 
@@ -25,4 +27,5 @@ module.exports = {
   smtpPassword,
   clientUrl,
   defaultUserImage,
+  jwtResetPasswordKey,
 };
