@@ -8,11 +8,11 @@ const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtActivationKey, clientUrl } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const {
-  handleUserAction,
   findUsers,
   findUserByID,
   deleteUserByID,
   UpdateUserByID,
+  userStatusAction,
 } = require("../services/userService");
 
 const handleGetUsers = async (req, res, next) => {
@@ -208,7 +208,7 @@ const handleManageUserStatusByID = async (req, res, next) => {
     const userID = req.params.id;
     const action = req.body.action;
 
-    const successMessage = await handleUserAction(userID, action);
+    const successMessage = await userStatusAction(userID, action);
 
     return successResponse(res, {
       statusCode: 200,

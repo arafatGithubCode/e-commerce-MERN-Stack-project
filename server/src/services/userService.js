@@ -1,6 +1,8 @@
+const createError = require("http-errors");
+const mongoose = require("mongoose");
+
 const { deleteImage } = require("../helper/deleteImage");
 const User = require("../models/userModel");
-const createError = require("http-errors");
 
 const findUsers = async (search, limit, page) => {
   try {
@@ -39,6 +41,9 @@ const findUsers = async (search, limit, page) => {
       },
     };
   } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      throw createError(400, "Invalid ID");
+    }
     throw error;
   }
 };
@@ -51,6 +56,9 @@ const findUserByID = async (id, options = {}) => {
     }
     return user;
   } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      throw createError(400, "Invalid ID");
+    }
     throw error;
   }
 };
@@ -68,6 +76,9 @@ const deleteUserByID = async (userID, options = {}) => {
       await deleteImage(user.image);
     }
   } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      throw createError(400, "Invalid ID");
+    }
     throw error;
   }
 };
@@ -115,11 +126,14 @@ const UpdateUserByID = async (req) => {
     }
     return updatedUser;
   } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      throw createError(400, "Invalid ID");
+    }
     throw error;
   }
 };
 
-const handleUserAction = async (userID, action) => {
+const userStatusAction = async (userID, action) => {
   try {
     const user = await User.findOne({ _id: userID });
 
@@ -154,6 +168,9 @@ const handleUserAction = async (userID, action) => {
     }
     return successMessage;
   } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      throw createError(400, "Invalid ID");
+    }
     throw error;
   }
 };
@@ -163,5 +180,5 @@ module.exports = {
   findUserByID,
   deleteUserByID,
   UpdateUserByID,
-  handleUserAction,
+  userStatusAction,
 };
