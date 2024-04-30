@@ -265,6 +265,74 @@ const updateUserByID = async (req, res, next) => {
   }
 };
 
+const handleBanUserByID = async (req, res, next) => {
+  try {
+    const userID = req.params.id;
+    const user = await User.findOne({ _id: userID });
+    if (user.isBanned) {
+      throw createError(400, "This user already has been banned");
+    }
+    const updates = { isBanned: true };
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      updates,
+      updateOptions
+    ).select("-password");
+
+    if (!updatedUser) {
+      throw createError(400, "User cannot be banned successfully.");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "A user was banned successfully!",
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "Invalid User ID"));
+      return;
+    }
+    next(error);
+  }
+};
+
+const handleUnbanUserByID = async (req, res, next) => {
+  try {
+    const userID = req.params.id;
+    const user = await User.findOne({ _id: userID });
+    if (!user.isBanned) {
+      throw createError(400, "This user already has been unbanned");
+    }
+    const updates = { isBanned: false };
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      updates,
+      updateOptions
+    ).select("-password");
+
+    if (!updatedUser) {
+      throw createError(400, "User cannot be unbanned successfully.");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "A user was unbanned successfully!",
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "Invalid User ID"));
+      return;
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserByID,
@@ -272,4 +340,6 @@ module.exports = {
   processRegister,
   activateUserAccount,
   updateUserByID,
+  handleBanUserByID,
+  handleUnbanUserByID,
 };
