@@ -10,6 +10,7 @@ const {
   handleProcessRegister,
   handleUpdatePassword,
   handleForgetPassword,
+  handleResetPassword,
 } = require("../controllers/userController");
 const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 const uploadUserImage = require("../middlewares/uploadFile");
@@ -18,6 +19,7 @@ const {
   validateUserRegistration,
   validateUserUpdatePassword,
   validateUserForgetPassword,
+  validateUserResetPassword,
 } = require("../validators/auth");
 
 //GET: api/users
@@ -31,6 +33,12 @@ userRouter.post(
 );
 userRouter.post("/verify", isLoggedOut, handleActivateUserAccount);
 userRouter.get("/", isLoggedIn, isAdmin, handleGetUsers);
+userRouter.put(
+  "/reset-password",
+  validateUserResetPassword,
+  runValidation,
+  handleResetPassword
+);
 userRouter.get("/:id", isLoggedIn, handleGetUserByID);
 userRouter.delete("/:id", isLoggedIn, handleDeleteUserByID);
 userRouter.put(
