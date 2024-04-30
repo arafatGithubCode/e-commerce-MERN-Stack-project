@@ -9,7 +9,11 @@ const { deleteImage } = require("../helper/deleteImage");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtActivationKey, clientUrl } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
-const { handleUserAction, findUsers } = require("../services/userService");
+const {
+  handleUserAction,
+  findUsers,
+  findUserByID,
+} = require("../services/userService");
 
 const handleGetUsers = async (req, res, next) => {
   try {
@@ -36,7 +40,7 @@ const handleGetUserByID = async (req, res, next) => {
   try {
     const userID = req.params.id;
     const options = { password: 0 };
-    const user = await findItemByID(User, userID, options);
+    const user = await findUserByID(userID, options);
 
     return successResponse(res, {
       statusCode: 200,

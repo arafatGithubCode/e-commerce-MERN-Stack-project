@@ -42,6 +42,18 @@ const findUsers = async (search, limit, page) => {
   }
 };
 
+const findUserByID = async (id, options = {}) => {
+  try {
+    const user = await User.findById(id, options);
+    if (!user) {
+      throw createError(404, "this user is not found.");
+    }
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const handleUserAction = async (userID, action) => {
   try {
     const user = await User.findOne({ _id: userID });
@@ -81,4 +93,4 @@ const handleUserAction = async (userID, action) => {
   }
 };
 
-module.exports = { findUsers, handleUserAction };
+module.exports = { findUsers, findUserByID, handleUserAction };
