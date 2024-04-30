@@ -4,8 +4,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const mongoose = require("mongoose");
-const { findItemByID } = require("../services/findItemByID");
-const { deleteImage } = require("../helper/deleteImage");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtActivationKey, clientUrl } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
@@ -14,6 +12,7 @@ const {
   findUsers,
   findUserByID,
   deleteUserByID,
+  UpdateUserByID,
 } = require("../services/userService");
 
 const handleGetUsers = async (req, res, next) => {
@@ -188,45 +187,7 @@ const handleActivateUserAccount = async (req, res, next) => {
 
 const handleUpdateUserByID = async (req, res, next) => {
   try {
-    const userID = req.params.id;
-    const options = { password: 0 };
-    const user = await findItemByID(User, userID, options);
-
-    const updateOptions = { new: true, runValidators: true, context: "query" };
-
-    let updates = {};
-
-    //best practice
-    for (let key in req.body) {
-      if (["name", "password", "address", "phone"].includes(key)) {
-        updates[key] = req.body[key];
-      } else if (["email"].includes(key)) {
-        throw createError(400, "Email cannot be updated");
-      }
-    }
-
-    const image = req.file?.path;
-
-    if (image) {
-      if (image.size > 1024 * 1024 * 2) {
-        throw createError(400, "File too large. It must be less then 2 MB.");
-      }
-      updates.image = image;
-      user.image !== "avatar.png" && deleteImage(user.image);
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userID,
-      updates,
-      updateOptions
-    ).select("-password");
-
-    if (!updatedUser) {
-      throw createError(
-        400,
-        "Cannot update because user with this ID is not exist."
-      );
-    }
+    const updatedUser = await UpdateUserByID(req);
 
     return successResponse(res, {
       statusCode: 200,

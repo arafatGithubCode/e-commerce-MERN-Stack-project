@@ -72,6 +72,53 @@ const deleteUserByID = async (userID, options = {}) => {
   }
 };
 
+const UpdateUserByID = async (req) => {
+  try {
+    const userID = req.params.id;
+    const options = { password: 0 };
+    const user = await findUserByID(userID, options);
+
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    let updates = {};
+
+    //best practice
+    for (let key in req.body) {
+      if (["name", "password", "address", "phone"].includes(key)) {
+        updates[key] = req.body[key];
+      } else if (["email"].includes(key)) {
+        throw createError(400, "Email cannot be updated");
+      }
+    }
+
+    const image = req.file?.path;
+
+    if (image) {
+      if (image.size > 1024 * 1024 * 2) {
+        throw createError(400, "File too large. It must be less then 2 MB.");
+      }
+      updates.image = image;
+      user.image !== "avatar.png" && deleteImage(user.image);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      updates,
+      updateOptions
+    ).select("-password");
+
+    if (!updatedUser) {
+      throw createError(
+        400,
+        "Cannot update because user with this ID is not exist."
+      );
+    }
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const handleUserAction = async (userID, action) => {
   try {
     const user = await User.findOne({ _id: userID });
@@ -111,4 +158,10 @@ const handleUserAction = async (userID, action) => {
   }
 };
 
-module.exports = { findUsers, findUserByID, deleteUserByID, handleUserAction };
+module.exports = {
+  findUsers,
+  findUserByID,
+  deleteUserByID,
+  UpdateUserByID,
+  handleUserAction,
+};
