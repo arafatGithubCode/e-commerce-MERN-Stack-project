@@ -1,13 +1,13 @@
 const userRouter = require("express").Router();
 
 const {
-  getUsers,
-  getUserByID,
-  deleteUserByID,
-  processRegister,
-  activateUserAccount,
-  updateUserByID,
   handleManageUserStatusByID,
+  handleActivateUserAccount,
+  handleGetUsers,
+  handleGetUserByID,
+  handleDeleteUserByID,
+  handleUpdateUserByID,
+  handleProcessRegister,
 } = require("../controllers/userController");
 const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 const uploadUserImage = require("../middlewares/uploadFile");
@@ -21,17 +21,17 @@ userRouter.post(
   isLoggedOut,
   validateUserRegistration,
   runValidation,
-  processRegister
+  handleProcessRegister
 );
-userRouter.post("/verify", isLoggedOut, activateUserAccount);
-userRouter.get("/", isLoggedIn, isAdmin, getUsers);
-userRouter.get("/:id", isLoggedIn, getUserByID);
-userRouter.delete("/:id", isLoggedIn, deleteUserByID);
+userRouter.post("/verify", isLoggedOut, handleActivateUserAccount);
+userRouter.get("/", isLoggedIn, isAdmin, handleGetUsers);
+userRouter.get("/:id", isLoggedIn, handleGetUserByID);
+userRouter.delete("/:id", isLoggedIn, handleDeleteUserByID);
 userRouter.put(
   "/:id",
   uploadUserImage.single("image"),
   isLoggedIn,
-  updateUserByID
+  handleUpdateUserByID
 );
 userRouter.put(
   "/manage-user/:id",
