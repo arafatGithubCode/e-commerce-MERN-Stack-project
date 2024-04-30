@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcryptjs");
 
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
@@ -223,6 +224,50 @@ const handleManageUserStatusByID = async (req, res, next) => {
   }
 };
 
+const handleUpdatePassword = async (req, res, next) => {
+  try {
+    const { email, oldPassword, newPassword, confirmPassword } = req.body;
+    const userID = req.params.id;
+
+    const user = await findUserByID(userID);
+
+    if (user.email !== email) {
+      throw createError(404, "Email didn't match. Please enter correct email.");
+    }
+
+    // compare the password
+    const isPasswordMatch = await bcryptjs.compare(oldPassword, user.password);
+    if (!isPasswordMatch) {
+      throw createError(401, "Old password didn't match");
+    }
+
+    // const update = { $set: { password: newPassword } };
+    // const updateOptions = { new: true };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      { password: newPassword },
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      throw createError(400, "User's password cannot updated successfully.");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User's password updated successfully!",
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "Invalid User ID"));
+      return;
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   handleGetUsers,
   handleGetUserByID,
@@ -231,4 +276,5 @@ module.exports = {
   handleActivateUserAccount,
   handleUpdateUserByID,
   handleManageUserStatusByID,
+  handleUpdatePassword,
 };
