@@ -1,6 +1,5 @@
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
-const bcryptjs = require("bcryptjs");
 
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
@@ -14,6 +13,7 @@ const {
   deleteUserByID,
   UpdateUserByID,
   userStatusAction,
+  UpdateUserPasswordByID,
 } = require("../services/userService");
 
 const handleGetUsers = async (req, res, next) => {
@@ -229,30 +229,13 @@ const handleUpdatePassword = async (req, res, next) => {
     const { email, oldPassword, newPassword, confirmPassword } = req.body;
     const userID = req.params.id;
 
-    const user = await findUserByID(userID);
-
-    if (user.email !== email) {
-      throw createError(404, "Email didn't match. Please enter correct email.");
-    }
-
-    // compare the password
-    const isPasswordMatch = await bcryptjs.compare(oldPassword, user.password);
-    if (!isPasswordMatch) {
-      throw createError(401, "Old password didn't match");
-    }
-
-    // const update = { $set: { password: newPassword } };
-    // const updateOptions = { new: true };
-
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await UpdateUserPasswordByID(
       userID,
-      { password: newPassword },
-      { new: true }
-    ).select("-password");
-
-    if (!updatedUser) {
-      throw createError(400, "User's password cannot updated successfully.");
-    }
+      email,
+      oldPassword,
+      newPassword,
+      confirmPassword
+    );
 
     return successResponse(res, {
       statusCode: 200,
