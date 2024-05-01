@@ -7,6 +7,7 @@ const altasDB =
 
 const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "sdlkfjskdltkijd55";
 const jwtAccessKey = process.env.JWT_ACCESS_KEY || "DFDLKFJLSKDJFLKSDJFLKS";
+const jwtRefreshKey = process.env.JWT_REFRESH_KEY || "DFDLKFJLSKDJFLKSDJFLKS";
 const jwtResetPasswordKey =
   process.env.JWT_RESET_PASSWORD_KEY || "DFDLKFJLSKDJFLKSDJFLKS254";
 
@@ -28,4 +29,5 @@ module.exports = {
   clientUrl,
   defaultUserImage,
   jwtResetPasswordKey,
+  jwtRefreshKey,
 };
