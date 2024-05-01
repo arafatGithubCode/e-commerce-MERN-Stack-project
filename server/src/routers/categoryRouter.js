@@ -4,6 +4,7 @@ const {
   handleCreateCategory,
   handleGetCategories,
   handleGetCategory,
+  handleUpdateCategory,
 } = require("../controllers/categoryController");
 const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 const runValidation = require("../validators");
@@ -22,5 +23,14 @@ categoryRouter.post(
 categoryRouter.get("/", handleGetCategories);
 // GET: /api/category
 categoryRouter.get("/:slug", handleGetCategory);
+// PUT: /api/category
+categoryRouter.put(
+  "/:slug",
+  validateCategory,
+  runValidation,
+  isLoggedIn,
+  isAdmin,
+  handleUpdateCategory
+);
 
 module.exports = { categoryRouter };
