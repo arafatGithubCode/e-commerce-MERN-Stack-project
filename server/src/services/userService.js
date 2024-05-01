@@ -8,6 +8,7 @@ const User = require("../models/userModel");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtResetPasswordKey, clientUrl } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
+const sendEmail = require("../helper/sendEmail");
 
 const findUsers = async (search, limit, page) => {
   try {
@@ -211,12 +212,9 @@ const forgetUserPasswordByEmail = async (email) => {
     };
 
     // send email with nodemailer
-    try {
-      await emailWithNodeMailer(emailData);
-    } catch (emailErr) {
-      next(createError(500, "Failed to send reset password email"));
-      return;
-    }
+    const mailErrMessage = "Failed to send reset password email";
+    await sendEmail(emailData, mailErrMessage);
+
     return token;
   } catch (error) {
     throw error;

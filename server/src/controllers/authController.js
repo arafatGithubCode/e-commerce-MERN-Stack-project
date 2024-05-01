@@ -6,6 +6,10 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtAccessKey, jwtRefreshKey } = require("../secret");
+const {
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
+} = require("../helper/cookie");
 
 const handleLogin = async (req, res, next) => {
   try {
@@ -31,21 +35,11 @@ const handleLogin = async (req, res, next) => {
     }
     // token, cookie
     const accessToken = createjsonWebToken({ user }, jwtAccessKey, "15m");
-    res.cookie("accessToken", accessToken, {
-      maxAge: 15 * 60 * 1000, // 15 minutes
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
-    });
+    setAccessTokenCookie(res, accessToken);
 
     // refreshToken, cookie
     const refreshToken = createjsonWebToken({ user }, jwtRefreshKey, "7d");
-    res.cookie("refreshToken", refreshToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
-    });
+    setRefreshTokenCookie(res, refreshToken);
 
     const userWithoutPassword = user.toObject();
     delete userWithoutPassword.password;
@@ -92,12 +86,7 @@ const handleRefreshToken = async (req, res, next) => {
       jwtAccessKey,
       "15m"
     );
-    res.cookie("accessToken", accessToken, {
-      maxAge: 15 * 60 * 1000, // 15 minutes
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
-    });
+    setAccessTokenCookie(res, accessToken);
     return successResponse(res, {
       statusCode: 200,
       message: "A new access token is generated.",
