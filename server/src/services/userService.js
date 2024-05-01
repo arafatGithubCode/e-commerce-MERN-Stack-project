@@ -30,7 +30,7 @@ const findUsers = async (search, limit, page) => {
 
     const count = await User.find(filter).countDocuments();
 
-    if (!users) throw createError(404, "No users found!");
+    if (!users || users.length === 0) throw createError(404, "No users found!");
 
     const totalPages = Math.ceil(count / limit);
     const previousPage = page - 1 > 0 ? page - 1 : null;
@@ -56,7 +56,7 @@ const findUsers = async (search, limit, page) => {
 const findUserByID = async (id, options = {}) => {
   try {
     const user = await User.findById(id, options);
-    if (!user) {
+    if (!user || user.length === 0) {
       throw createError(404, "this user is not found.");
     }
     return user;
@@ -99,10 +99,12 @@ const UpdateUserByID = async (req) => {
     let updates = {};
 
     //best practice
-    for (let key in req.body) {
-      if (["name", "password", "address", "phone"].includes(key)) {
+    const allowedFields = ["name", "password", "address", "phone"];
+
+    for (const key in req.body) {
+      if (allowedFields.includes(key)) {
         updates[key] = req.body[key];
-      } else if (["email"].includes(key)) {
+      } else if (key === "email") {
         throw createError(400, "Email cannot be updated");
       }
     }

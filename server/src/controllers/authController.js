@@ -47,9 +47,8 @@ const handleLogin = async (req, res, next) => {
       sameSite: "none",
     });
 
-    const userWithoutPassword = await User.findOne({ email }).select(
-      "-password"
-    );
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
 
     //success response
     return successResponse(res, {
@@ -65,6 +64,7 @@ const handleLogin = async (req, res, next) => {
 const handleLogout = async (req, res, next) => {
   try {
     res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     //success response
     return successResponse(res, {
       statusCode: 200,

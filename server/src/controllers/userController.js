@@ -139,7 +139,6 @@ const handleProcessRegister = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `Please go to your ${email} to complete registration process`,
-      payload: { token },
     });
   } catch (error) {
     if (error instanceof mongoose.Error) {
