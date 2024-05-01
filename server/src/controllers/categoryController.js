@@ -7,6 +7,7 @@ const {
   getCategories,
   getCategory,
   updateCategory,
+  deleteCategory,
 } = require("../services/categoryService");
 
 const handleCreateCategory = async (req, res, next) => {
@@ -103,9 +104,33 @@ const handleUpdateCategory = async (req, res, next) => {
   }
 };
 
+const handleDeleteCategory = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+
+    const deletedCategory = await deleteCategory(slug);
+
+    if (!deletedCategory) {
+      throw createError(401, "Failed to delete this category.");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "category was deleted successfully.",
+    });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      next(createError(400, "Invalid User ID"));
+      return;
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   handleCreateCategory,
   handleGetCategories,
   handleGetCategory,
   handleUpdateCategory,
+  handleDeleteCategory,
 };
