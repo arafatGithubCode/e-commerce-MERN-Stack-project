@@ -6,23 +6,9 @@ const { createProduct } = require("../services/productService");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
-    const { name, description, price, sold, quantity, shipping, category } =
-      req.body;
-
     const image = req.file?.path;
 
-    const productData = {
-      name,
-      description,
-      price,
-      sold,
-      quantity,
-      shipping,
-      category,
-      image,
-    };
-
-    const product = await createProduct(productData);
+    const product = await createProduct(req.body, image);
 
     return successResponse(res, {
       statusCode: 201,
