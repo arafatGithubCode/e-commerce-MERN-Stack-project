@@ -1,8 +1,6 @@
-const slugify = require("slugify");
 const mongoose = require("mongoose");
 const createError = require("http-errors");
 
-const Product = require("../models/productModel");
 const { successResponse } = require("./responseController");
 const { createProduct } = require("../services/productService");
 

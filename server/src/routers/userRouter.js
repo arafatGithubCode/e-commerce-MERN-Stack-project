@@ -13,7 +13,7 @@ const {
   handleResetPassword,
 } = require("../controllers/userController");
 const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
-const uploadUserImage = require("../middlewares/uploadFile");
+const { uploadUserImage } = require("../middlewares/uploadFile");
 const runValidation = require("../validators");
 const {
   validateUserRegistration,
