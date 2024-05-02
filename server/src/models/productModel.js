@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const categorySchema = new Schema(
+const productSchema = new Schema(
   {
     name: {
       type: String,
@@ -8,7 +8,7 @@ const categorySchema = new Schema(
       required: [true, "product name is required."],
       trim: true,
       minLength: [3, "The length of product name minimum 3 characters."],
-      minLength: [50, "The length of product name maximum 50 characters."],
+      maxLength: [50, "The length of product name maximum 50 characters."],
     },
     slug: {
       type: String,
@@ -21,9 +21,9 @@ const categorySchema = new Schema(
       trim: true,
       required: [true, "product description is required."],
       minLength: [3, "The length of product description minimum 3 characters."],
-      minLength: [
-        50,
-        "The length of product description maximum 250 characters.",
+      maxLength: [
+        500,
+        "The length of product description maximum 500 characters.",
       ],
     },
     price: {
@@ -69,6 +69,6 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
-const Category = model("category", categorySchema);
+const Product = model("product", productSchema);
 
-module.exports = Category;
+module.exports = Product;
