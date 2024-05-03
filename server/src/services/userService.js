@@ -7,8 +7,11 @@ const { deleteImage } = require("../helper/deleteImage");
 const User = require("../models/userModel");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtResetPasswordKey, clientUrl } = require("../secret");
-const emailWithNodeMailer = require("../helper/email");
 const sendEmail = require("../helper/sendEmail");
+const {
+  publicIDWithoutExtensionFromUrl,
+  deleteFileFromCloudinary,
+} = require("../helper/deleteCloudinaryFile");
 
 const findUsers = async (search, limit, page) => {
   try {
@@ -75,11 +78,13 @@ const deleteUserByID = async (userID, options = {}) => {
       _id: userID,
       isAdmin: false,
     });
+
     if (!user) {
       throw createError(404, "this user is not found.");
     }
     if (user && user.image) {
-      await deleteImage(user.image);
+      const publicID = await publicIDWithoutExtensionFromUrl(user.image);
+      await deleteFileFromCloudinary("e-commerce-mern/users", publicID, "User");
     }
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {

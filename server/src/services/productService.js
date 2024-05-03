@@ -5,6 +5,11 @@ const cloudinary = require("../config/cloudinary");
 const Product = require("../models/productModel");
 const { deleteImage } = require("../helper/deleteImage");
 
+const {
+  publicIDWithoutExtensionFromUrl,
+  deleteFileFromCloudinary,
+} = require("../helper/deleteCloudinaryFile");
+
 const createProduct = async (productData, image) => {
   if (!image) {
     throw createError(400, "product Image is required.");
@@ -75,7 +80,12 @@ const deleteProductBySlug = async (slug) => {
   if (!product) {
     throw createError(400, "No product found.");
   } else {
-    deleteImage(product.image);
+    const publicID = await publicIDWithoutExtensionFromUrl(product.image);
+    await deleteFileFromCloudinary(
+      "e-commerce-mern/products",
+      publicID,
+      "Product"
+    );
   }
 
   return product;
