@@ -12,12 +12,15 @@ const jwtResetPasswordKey =
   process.env.JWT_RESET_PASSWORD_KEY || "DFDLKFJLSKDJFLKSDJFLKS254";
 
 const smtpUsername = process.env.SMTP_USERNAME || "";
-
 const smtpPassword = process.env.SMTP_PASSWORD || "";
 
 const clientUrl = process.env.CLIENT_URL || "";
 
 const defaultUserImage = "./public/images/users/avatar.png";
+
+const cloudinaryName = process.env.CLOUDINARY_NAME;
+const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY;
+const cloudinarySecretKey = process.env.CLOUDINARY_SECRET_KEY;
 
 module.exports = {
   serverPort,
@@ -30,4 +33,7 @@ module.exports = {
   defaultUserImage,
   jwtResetPasswordKey,
   jwtRefreshKey,
+  cloudinaryName,
+  cloudinaryApiKey,
+  cloudinarySecretKey,
 };

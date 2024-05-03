@@ -39,7 +39,7 @@ const handleGetProducts = async (req, res, next) => {
     } = productInfo;
 
     return successResponse(res, {
-      statusCode: 201,
+      statusCode: 200,
       message: "Products were returned successfully.",
       payload: {
         products,

@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const slugify = require("slugify");
 
+const cloudinary = require("../config/cloudinary");
 const Product = require("../models/productModel");
 const { deleteImage } = require("../helper/deleteImage");
 
@@ -8,7 +9,10 @@ const createProduct = async (productData, image) => {
   if (!image) {
     throw createError(400, "product Image is required.");
   } else {
-    productData.image = image;
+    const response = await cloudinary.uploader.upload(image, {
+      folder: "e-commerce-mern/products",
+    });
+    productData.image = response.secure_url;
   }
 
   if (image.size > 1024 * 1024 * 2) {
@@ -29,17 +33,17 @@ const createProduct = async (productData, image) => {
 };
 
 const getProducts = async (page = 1, limit = 5) => {
-  const products = await Product.find({})
+  const products = await Product.find()
     .populate("category")
-    .skip((page - 1) * limit)
     .limit(limit)
+    .skip((page - 1) * limit)
     .sort({ createdAt: -1 });
 
   if (!products) {
     throw createError(400, "No products found.");
   }
 
-  const count = await Product.find({}).countDocuments();
+  const count = await Product.find().countDocuments();
 
   const totalPages = Math.ceil(count / limit);
   const previousPage = page - 1 > 0 ? page - 1 : null;

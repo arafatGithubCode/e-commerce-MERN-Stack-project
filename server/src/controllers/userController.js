@@ -1,16 +1,13 @@
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
 
+const cloudinary = require("../config/cloudinary");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const mongoose = require("mongoose");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
-const {
-  jwtActivationKey,
-  clientUrl,
-  jwtResetPasswordKey,
-} = require("../secret");
-const emailWithNodeMailer = require("../helper/email");
+const { jwtActivationKey, clientUrl } = require("../secret");
+
 const {
   findUsers,
   findUserByID,
@@ -137,6 +134,7 @@ const handleProcessRegister = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `Please go to your ${email} to complete registration process`,
+      payload: token,
     });
   } catch (error) {
     if (error instanceof mongoose.Error) {
@@ -164,6 +162,14 @@ const handleActivateUserAccount = async (req, res, next) => {
           409,
           "User with this email already exist. Please sign in"
         );
+      }
+
+      const image = decoded.image;
+      if (image) {
+        const response = await cloudinary.uploader.upload(image, {
+          folder: "e-commerce-mern/users",
+        });
+        decoded.image = response.secure_url;
       }
 
       await User.create(decoded);
