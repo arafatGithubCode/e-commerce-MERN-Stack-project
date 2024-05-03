@@ -1,6 +1,3 @@
-const mongoose = require("mongoose");
-const createError = require("http-errors");
-
 const { successResponse } = require("./responseController");
 const {
   createProduct,
@@ -9,7 +6,6 @@ const {
   deleteProductBySlug,
   updateProductBySlug,
 } = require("../services/productService");
-const Product = require("../models/productModel");
 
 const handleCreateProduct = async (req, res, next) => {
   try {

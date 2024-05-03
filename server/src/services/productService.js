@@ -78,6 +78,8 @@ const deleteProductBySlug = async (slug) => {
 };
 
 const updateProductBySlug = async (slug, updates, image) => {
+  const product = await Product.findOne({ slug });
+
   const updateOptions = { new: true, runValidators: true, context: "query" };
 
   if (updates.title) {
@@ -89,6 +91,7 @@ const updateProductBySlug = async (slug, updates, image) => {
       throw createError(400, "File too large. It must be less then 2 MB.");
     }
     updates.image = image;
+    product.image !== "default.png" && deleteImage(product.image);
   }
 
   const updatedProduct = await Product.findOneAndUpdate(
