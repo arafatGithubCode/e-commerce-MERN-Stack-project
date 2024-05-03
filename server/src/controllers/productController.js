@@ -7,6 +7,7 @@ const {
   getProducts,
   getProductBySlug,
   deleteProductBySlug,
+  updateProductBySlug,
 } = require("../services/productService");
 const Product = require("../models/productModel");
 
@@ -93,9 +94,44 @@ const handleDeleteProduct = async (req, res, next) => {
   }
 };
 
+const handleUpdateProduct = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const image = req.file?.path;
+
+    let updates = {};
+
+    const allowedFields = [
+      "title",
+      "description",
+      "price",
+      "quantity",
+      "sold",
+      "shipping",
+    ];
+
+    for (const key in req.body) {
+      if (allowedFields.includes(key)) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const updatedProduct = await updateProductBySlug(slug, updates, image);
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "A product was updated successfully.",
+      payload: { updatedProduct },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   handleCreateProduct,
   handleGetProducts,
   handleGetProduct,
   handleDeleteProduct,
+  handleUpdateProduct,
 };

@@ -77,9 +77,36 @@ const deleteProductBySlug = async (slug) => {
   return product;
 };
 
+const updateProductBySlug = async (slug, updates, image) => {
+  const updateOptions = { new: true, runValidators: true, context: "query" };
+
+  if (updates.title) {
+    updates.slug = slugify(updates.title);
+  }
+
+  if (image) {
+    if (image.size > 1024 * 1024 * 2) {
+      throw createError(400, "File too large. It must be less then 2 MB.");
+    }
+    updates.image = image;
+  }
+
+  const updatedProduct = await Product.findOneAndUpdate(
+    { slug },
+    updates,
+    updateOptions
+  );
+
+  if (!updatedProduct) {
+    throw createError(400, "Cannot update because this product is not exist.");
+  }
+  return updatedProduct;
+};
+
 module.exports = {
   createProduct,
   getProducts,
   getProductBySlug,
   deleteProductBySlug,
+  updateProductBySlug,
 };
