@@ -19,7 +19,7 @@ const data = {
   ],
   products: [
     {
-      name: "iPhone proMax9",
+      title: "iPhone proMax9",
       slug: "iPhone-proMax9",
       description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
@@ -30,7 +30,7 @@ const data = {
       category: "663310b7debe786501cbf08b",
     },
     {
-      name: "sumsung A30",
+      title: "sumsung A30",
       slug: "sumsung-A30",
       description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
@@ -41,7 +41,7 @@ const data = {
       category: "663310cadebe786501cbf08d",
     },
     {
-      name: "sumsung j7",
+      title: "sumsung j7",
       slug: "sumsung-j7",
       description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
@@ -52,7 +52,7 @@ const data = {
       category: "663310cadebe786501cbf08d",
     },
     {
-      name: "redmi pro",
+      title: "redmi pro",
       slug: "redmi pro",
       description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
@@ -63,7 +63,7 @@ const data = {
       category: "663310dddebe786501cbf091",
     },
     {
-      name: "redmi 7s",
+      title: "redmi 7s",
       slug: "redmi 7s",
       description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
@@ -74,7 +74,7 @@ const data = {
       category: "663310dddebe786501cbf091",
     },
     {
-      name: "nokia 1200m",
+      title: "nokia 1200m",
       slug: "nokia-1200m",
       description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
@@ -85,7 +85,7 @@ const data = {
       category: "663310d5debe786501cbf08f",
     },
     {
-      name: "sony max",
+      title: "sony max",
       slug: "sony-max",
       description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",

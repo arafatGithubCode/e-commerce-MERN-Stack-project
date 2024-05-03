@@ -2,13 +2,13 @@ const { body } = require("express-validator");
 
 //product validation
 const validateProduct = [
-  body("name")
+  body("title")
     .trim()
     .notEmpty()
-    .withMessage("Product name is required.")
+    .withMessage("Product title is required.")
     .isLength({ min: 3, max: 50 })
     .withMessage(
-      "Product name should be minimum 3 to maximum 50 characters log"
+      "Product title should be minimum 3 to maximum 50 characters log"
     ),
   body("description")
     .trim()

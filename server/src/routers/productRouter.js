@@ -3,6 +3,7 @@ const productRouter = require("express").Router();
 const {
   handleCreateProduct,
   handleGetProducts,
+  handleGetProduct,
 } = require("../controllers/productController");
 const { isLoggedIn, isAdmin } = require("../middlewares/auth");
 const { uploadProductImage } = require("../middlewares/uploadFile");
@@ -22,5 +23,7 @@ productRouter.post(
 
 //GET: api/products -> return all products
 productRouter.get("/", handleGetProducts);
+//GET: api/products -> return a product
+productRouter.get("/:slug", handleGetProduct);
 
 module.exports = { productRouter };

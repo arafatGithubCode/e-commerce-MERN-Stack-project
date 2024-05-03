@@ -14,14 +14,14 @@ const createProduct = async (productData, image) => {
     throw createError(400, "File too large. It must be less then 2 MB.");
   }
 
-  const productExist = await Product.exists({ name: productData.name });
+  const productExist = await Product.exists({ title: productData.title });
   if (productExist) {
     throw createError(409, "This product is already exist.");
   }
 
   const product = await Product.create({
     ...productData,
-    slug: slugify(productData.name),
+    slug: slugify(productData.title),
   });
 
   return product;
@@ -56,4 +56,13 @@ const getProducts = async (page = 1, limit = 5) => {
   };
 };
 
-module.exports = { createProduct, getProducts };
+const getProductBySlug = async (slug) => {
+  const product = await Product.findOne({ slug }).populate("category");
+  if (!product) {
+    throw createError(400, "No product found.");
+  }
+
+  return product;
+};
+
+module.exports = { createProduct, getProducts, getProductBySlug };

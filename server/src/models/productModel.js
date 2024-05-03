@@ -2,13 +2,13 @@ const { Schema, model } = require("mongoose");
 
 const productSchema = new Schema(
   {
-    name: {
+    title: {
       type: String,
-      unique: [true, "product name should be unique."],
-      required: [true, "product name is required."],
+      unique: [true, "product title should be unique."],
+      required: [true, "product title is required."],
       trim: true,
-      minLength: [3, "The length of product name minimum 3 characters."],
-      maxLength: [50, "The length of product name maximum 50 characters."],
+      minLength: [3, "The length of product title minimum 3 characters."],
+      maxLength: [50, "The length of product title maximum 50 characters."],
     },
     slug: {
       type: String,

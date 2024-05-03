@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 const createError = require("http-errors");
 
 const { successResponse } = require("./responseController");
-const { createProduct, getProducts } = require("../services/productService");
+const {
+  createProduct,
+  getProducts,
+  getProductBySlug,
+} = require("../services/productService");
 const Product = require("../models/productModel");
 
 const handleCreateProduct = async (req, res, next) => {
@@ -17,10 +21,6 @@ const handleCreateProduct = async (req, res, next) => {
       payload: { product },
     });
   } catch (error) {
-    if (error instanceof mongoose.Error) {
-      next(createError(400, "Invalid User ID"));
-      return;
-    }
     next(error);
   }
 };
@@ -45,20 +45,36 @@ const handleGetProducts = async (req, res, next) => {
       message: "Products were returned successfully.",
       payload: {
         products,
-        totalPages,
-        totalNumberOfProducts,
-        currentPage,
-        previousPage,
-        nextPage,
+        pagination: {
+          totalPages,
+          totalNumberOfProducts,
+          currentPage,
+          previousPage,
+          nextPage,
+        },
       },
     });
   } catch (error) {
-    if (error instanceof mongoose.Error) {
-      next(createError(400, "Invalid User ID"));
-      return;
-    }
     next(error);
   }
 };
 
-module.exports = { handleCreateProduct, handleGetProducts };
+const handleGetProduct = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+
+    const product = await getProductBySlug(slug);
+
+    return successResponse(res, {
+      statusCode: 201,
+      message: "A product was returned successfully.",
+      payload: {
+        product,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { handleCreateProduct, handleGetProducts, handleGetProduct };
