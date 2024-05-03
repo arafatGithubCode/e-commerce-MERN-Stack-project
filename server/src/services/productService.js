@@ -65,4 +65,18 @@ const getProductBySlug = async (slug) => {
   return product;
 };
 
-module.exports = { createProduct, getProducts, getProductBySlug };
+const deleteProductBySlug = async (slug) => {
+  const product = await Product.findOneAndDelete({ slug });
+  if (!product) {
+    throw createError(400, "No product found.");
+  }
+
+  return product;
+};
+
+module.exports = {
+  createProduct,
+  getProducts,
+  getProductBySlug,
+  deleteProductBySlug,
+};

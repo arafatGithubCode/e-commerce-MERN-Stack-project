@@ -6,6 +6,7 @@ const {
   createProduct,
   getProducts,
   getProductBySlug,
+  deleteProductBySlug,
 } = require("../services/productService");
 const Product = require("../models/productModel");
 
@@ -77,4 +78,24 @@ const handleGetProduct = async (req, res, next) => {
   }
 };
 
-module.exports = { handleCreateProduct, handleGetProducts, handleGetProduct };
+const handleDeleteProduct = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+
+    await deleteProductBySlug(slug);
+
+    return successResponse(res, {
+      statusCode: 201,
+      message: "A product was deleted successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  handleCreateProduct,
+  handleGetProducts,
+  handleGetProduct,
+  handleDeleteProduct,
+};

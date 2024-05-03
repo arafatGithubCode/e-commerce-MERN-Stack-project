@@ -4,6 +4,7 @@ const {
   handleCreateProduct,
   handleGetProducts,
   handleGetProduct,
+  handleDeleteProduct,
 } = require("../controllers/productController");
 const { isLoggedIn, isAdmin } = require("../middlewares/auth");
 const { uploadProductImage } = require("../middlewares/uploadFile");
@@ -25,5 +26,7 @@ productRouter.post(
 productRouter.get("/", handleGetProducts);
 //GET: api/products -> return a product
 productRouter.get("/:slug", handleGetProduct);
+//DELETE: api/products -> delete a product
+productRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteProduct);
 
 module.exports = { productRouter };
