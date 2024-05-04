@@ -3,7 +3,6 @@ const slugify = require("slugify");
 
 const cloudinary = require("../config/cloudinary");
 const Product = require("../models/productModel");
-const { deleteImage } = require("../helper/deleteImage");
 
 const {
   publicIDWithoutExtensionFromUrl,
@@ -91,21 +90,45 @@ const deleteProductBySlug = async (slug) => {
   return product;
 };
 
-const updateProductBySlug = async (slug, updates, image) => {
+const updateProductBySlug = async (slug, req) => {
   const product = await Product.findOne({ slug });
+
+  if (!product) {
+    throw createError(400, "Product not found.");
+  }
 
   const updateOptions = { new: true, runValidators: true, context: "query" };
 
-  if (updates.title) {
-    updates.slug = slugify(updates.title);
+  let updates = {};
+
+  const allowedFields = [
+    "title",
+    "description",
+    "price",
+    "quantity",
+    "sold",
+    "shipping",
+  ];
+
+  for (const key in req.body) {
+    if (allowedFields.includes(key)) {
+      if (key === "title") {
+        updates.slug = slugify(req.body[key]);
+      }
+      updates[key] = req.body[key];
+    }
   }
+
+  const image = req.file?.path;
 
   if (image) {
     if (image.size > 1024 * 1024 * 2) {
       throw createError(400, "File too large. It must be less then 2 MB.");
     }
-    updates.image = image;
-    product.image !== "default.png" && deleteImage(product.image);
+    const response = await cloudinary.uploader.upload(image, {
+      folder: "e-commerce-mern/products",
+    });
+    updates.image = response.secure_url;
   }
 
   const updatedProduct = await Product.findOneAndUpdate(
@@ -117,6 +140,17 @@ const updateProductBySlug = async (slug, updates, image) => {
   if (!updatedProduct) {
     throw createError(400, "Cannot update because this product is not exist.");
   }
+
+  //delete the previous image from cloudinary
+  if (product.image) {
+    const publicID = await publicIDWithoutExtensionFromUrl(product.image);
+    await deleteFileFromCloudinary(
+      "e-commerce-mern/products",
+      publicID,
+      "Product"
+    );
+  }
+
   return updatedProduct;
 };
 

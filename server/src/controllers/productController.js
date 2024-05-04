@@ -6,6 +6,11 @@ const {
   deleteProductBySlug,
   updateProductBySlug,
 } = require("../services/productService");
+const Product = require("../models/productModel");
+const {
+  publicIDWithoutExtensionFromUrl,
+  deleteFileFromCloudinary,
+} = require("../helper/deleteCloudinaryFile");
 
 const handleCreateProduct = async (req, res, next) => {
   try {
@@ -93,26 +98,8 @@ const handleDeleteProduct = async (req, res, next) => {
 const handleUpdateProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const image = req.file?.path;
 
-    let updates = {};
-
-    const allowedFields = [
-      "title",
-      "description",
-      "price",
-      "quantity",
-      "sold",
-      "shipping",
-    ];
-
-    for (const key in req.body) {
-      if (allowedFields.includes(key)) {
-        updates[key] = req.body[key];
-      }
-    }
-
-    const updatedProduct = await updateProductBySlug(slug, updates, image);
+    const updatedProduct = await updateProductBySlug(slug, req);
 
     return successResponse(res, {
       statusCode: 200,

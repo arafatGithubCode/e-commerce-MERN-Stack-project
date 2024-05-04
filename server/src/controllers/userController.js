@@ -197,7 +197,8 @@ const handleActivateUserAccount = async (req, res, next) => {
 
 const handleUpdateUserByID = async (req, res, next) => {
   try {
-    const updatedUser = await UpdateUserByID(req);
+    const userID = req.params.id;
+    const updatedUser = await UpdateUserByID(userID, req);
 
     return successResponse(res, {
       statusCode: 200,

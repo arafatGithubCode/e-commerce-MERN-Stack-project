@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const { deleteImage } = require("../helper/deleteImage");
+const cloudinary = require("../config/cloudinary");
 const User = require("../models/userModel");
 const { createjsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtResetPasswordKey, clientUrl } = require("../secret");
@@ -94,11 +94,14 @@ const deleteUserByID = async (userID, options = {}) => {
   }
 };
 
-const UpdateUserByID = async (req) => {
+const UpdateUserByID = async (userID, req) => {
   try {
-    const userID = req.params.id;
     const options = { password: 0 };
     const user = await findUserByID(userID, options);
+
+    if (!user) {
+      throw createError(400, "User not found.");
+    }
 
     const updateOptions = { new: true, runValidators: true, context: "query" };
 
@@ -121,8 +124,10 @@ const UpdateUserByID = async (req) => {
       if (image.size > 1024 * 1024 * 2) {
         throw createError(400, "File too large. It must be less then 2 MB.");
       }
-      updates.image = image;
-      user.image !== "avatar.png" && deleteImage(user.image);
+      const response = await cloudinary.uploader.upload(image, {
+        folder: "e-commerce-mern/users",
+      });
+      updates.image = response.secure_url;
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -136,6 +141,12 @@ const UpdateUserByID = async (req) => {
         400,
         "Cannot update because user with this ID is not exist."
       );
+    }
+
+    //delete the previous image from cloudinary
+    if (user.image) {
+      const publicID = await publicIDWithoutExtensionFromUrl(user.image);
+      await deleteFileFromCloudinary("e-commerce-mern/users", publicID, "User");
     }
     return updatedUser;
   } catch (error) {
